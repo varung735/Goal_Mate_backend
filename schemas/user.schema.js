@@ -4,6 +4,7 @@ const JWT = require('jsonwebtoken');
 const config = require('../config/enviornment.config');
 const authRoles = require('../utils/authRoles');
 const generateRandomChars = require('../services/generateRandomChars');
+const generateRandomDigits = require('../services/generateRandomDigits');
 
 const userSchema = new mongoose.Schema(
     {
@@ -32,7 +33,10 @@ const userSchema = new mongoose.Schema(
             default: authRoles.user
         },
         forgetPasswordToken: String,
-        forgetPasswordExpiry: Date
+        forgetPasswordExpiry: Date,
+        emailVerificationToken: String,
+        emailTokenExpiry: Date,
+        emailVerificationOtp: String
     },
     {
         timestamps: true
@@ -53,9 +57,7 @@ userSchema.methods = {
     generateJwtToken: async function() {
         return JWT.sign(
             {
-                _id: this._id,
-                email: this.email,
-                role: this.role
+                _id: this._id
             },
             config.jwt_secret,
             {
@@ -63,13 +65,28 @@ userSchema.methods = {
             }
         );
     },
-    generateForgetPasswordString: function() {
+    generateForgetPasswordToken: function() {
         const forgotPassToken = generateRandomChars(20);
 
         this.forgetPasswordToken = forgotPassToken;
         this.forgetPasswordExpiry = Date.now() + 30 * 60 * 1000;
 
         return forgotPassToken;
+    },
+    generateEmailVerificationToken: function() {
+        const verifyEmailToken = generateRandomChars(20);
+
+        this.emailVerificationToken = verifyEmailToken;
+        this.emailTokenExpiry = Date.now() + 30 * 60 * 1000;
+
+        return verifyEmailToken;
+    },
+    generateEmailVerificationOtp: function() {
+        const verifyEmailOtp = generateRandomDigits(6);
+
+        this.emailVerificationOtp = verifyEmailOtp;
+
+        return verifyEmailOtp;
     }
 };
 
