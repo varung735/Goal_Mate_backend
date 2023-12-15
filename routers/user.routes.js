@@ -5,9 +5,9 @@ const userRouter = express.Router();
 
 userRouter.post('/signup', UserSignUp);
 userRouter.post('/login', UserLogIn);
-userRouter.post('/forget/password', ForgetPassword);
+userRouter.get('/forget/password', ForgetPassword);
 userRouter.post('/reset/password', ResetPassword);
-userRouter.post('/verify/email/send_link', SendEmailVerificationToken);
+userRouter.get('/verify/email/send_link', SendEmailVerificationToken);
 userRouter.get('/verify/email', VerifyEmail);
 
 module.exports = userRouter;

@@ -98,6 +98,8 @@ exports.UserLogIn = asyncHandler(async (req, res) => {
 /*
 @ForgetPassword
 
+@method - GET
+
 @route
 local - http://localhost:4000/api/v1/users/forget/password
 prod - https://goalmate.render.app/api/v1/users/forget/password
@@ -109,7 +111,7 @@ prod - https://goalmate.render.app/api/v1/users/forget/password
 @returns - success or failure message
 */
 exports.ForgetPassword = asyncHandler(async (req, res) => {
-    const { email } = req.body;
+    const { email } = req.query;
 
     if(!email){
         throw new CustomError('Email is missing', 401);
@@ -154,6 +156,8 @@ exports.ForgetPassword = asyncHandler(async (req, res) => {
 
 /*
 @ResetPassword
+
+@method - POST
 
 @route
 local - http://localhost:4000/api/v1/users/reset/password
@@ -203,6 +207,8 @@ exports.ResetPassword = asyncHandler(async (req, res) => {
 /*
 @SendEmailVerificationLink
 
+@method - GET
+
 @route
 local - http://localhost:4000/api/v1/users/verify/email/send_link
 prod - https://goalmate.render.app/api/v1/users/verify/email/send_link
@@ -214,7 +220,7 @@ prod - https://goalmate.render.app/api/v1/users/verify/email/send_link
 @returns - success or failure response
 */
 exports.SendEmailVerificationToken = asyncHandler(async (req, res) => {
-    const { email } = req.body;
+    const { email } = req.query;
 
     const user = await userModel.findOne({ email: email });
 
