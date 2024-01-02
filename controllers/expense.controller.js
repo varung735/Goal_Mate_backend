@@ -4,8 +4,41 @@ const expenseTypes = require('../utils/expenseTypes');
 const asyncHandler = require('../utils/asyncHandler');
 const CustomError = require('../utils/customError');
 
+//Reminder - Current, monthly and yearly expenses are for pie charts
+
+/*
+@GetDistinctDates
+
+@method - GET
+
+@routes
+local - http://localhost:4000/api/v1/expenses/get/dates
+prod - https://goalmate.render.app/api/v1/expenses/get/dates
+
+**description - This function would get all the distinct dates for a user
+
+@parameters - userId
+
+@returns - dates array
+*/
+exports.GetDistinctDates = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+
+    const dates = await expenseModel.distinct('date', {
+        userId: userId
+    });
+
+    res.status(200).json({
+        success: true,
+        message: 'Got Dates Successfully',
+        dates
+    });
+});
+
 /*
 @CurrentExpense
+
+@method - GET
 
 @routes
 local - http://localhost:4000/api/v1/expenses/current
@@ -48,6 +81,8 @@ exports.CurrentExpense = asyncHandler(async (req, res) => {
 /*
 @MonthlyExpense
 
+@method - GET
+
 @routes
 local - http://localhost:4000/api/v1/expenses/monthly
 prod - https://goalmate.render.com/api/v1/expenses/monthly
@@ -59,11 +94,15 @@ prod - https://goalmate.render.com/api/v1/expenses/monthly
 @returns - expense object array
 */
 exports.MonthlyExpense = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+
 
 });
 
 /*
 @yearlyExpense
+
+@method - GET
 
 @routes
 local - http://localhost:4000/api/v1/expenses/yearly
@@ -80,7 +119,28 @@ exports.YearlyExpense = asyncHandler(async (req, res) => {
 });
 
 /*
+@GetExpenseByDate
+
+@method - GET
+
+@routes
+local - http://localhost:4000/api/v1/expenses/get/by_date?date=date
+prod - https://goalmate.render.app/api/v1/expenses/get/by_date?date=date
+
+**description - This function will get the expenses for a particular date provided by the user
+
+@paramter - date
+
+@returns - expenses object array
+*/
+exports.GetExpensesByDate = asyncHandler(async (req, res) => {
+    
+});
+
+/*
 @AddExpense
+
+@method - POST
 
 @routes
 local - http://localhost:4000/api/v1/expenses/add
@@ -107,7 +167,7 @@ exports.AddExpense = asyncHandler(async (req, res) => {
         description,
         amount,
         date
-    }).lean();
+    });
 
     res.status(200).json({
         success: true,
@@ -118,6 +178,8 @@ exports.AddExpense = asyncHandler(async (req, res) => {
 
 /*
 @EditExpense
+
+@method - PUT
 
 @routes
 local - http://localhost:4000/api/v1/expenses/edit
@@ -157,6 +219,8 @@ exports.EditExpense = asyncHandler(async (req, res) => {
 /*
 @DeleteExpense
 
+@method - DELETE
+
 @routes
 local - http://localhost:4000/api/v1/expenses/delete
 prod - https://goalmate.render.com/api/v1/expenses/delete
@@ -191,6 +255,8 @@ exports.DeleteExpense = asyncHandler(async (req, res) => {
 /*
 @GetExpensesCategories
 
+@method - GET
+
 @routes
 local - http://localhost:4000/api/v1/expenses/categories/expense
 prod = https://goalmate.render.app/api/v1/expenses/categories/expense
@@ -214,6 +280,8 @@ exports.GetExpensesCategories = asyncHandler(async (req, res) => {
 /*
 @GetIncomeCategories
 
+@method - GET
+
 @routes
 local - http://localhost:4000/api/v1/expenses/categories/income
 prod - https://goalmate.render.app/api/v1/expenses/categories/income
@@ -225,7 +293,7 @@ prod - https://goalmate.render.app/api/v1/expenses/categories/income
 @returns - expenseCatgories object array
 */
 exports.GetIncomeCategories = asyncHandler(async (req, res) => {
-    const incomeCategories = await incomeCategories.find({ type: incomeCategories.income });
+    const incomeCategories = await expenseCategoriesModel.find({ type: expenseTypes.income });
 
     res.status(200).json({
         success: true,
@@ -236,6 +304,8 @@ exports.GetIncomeCategories = asyncHandler(async (req, res) => {
 
 /*
 @AddCategory
+
+@method - POST
 
 @routes
 local - http://localhost:4000/api/v1/expenses/categories/add
@@ -254,12 +324,8 @@ exports.AddCategory = asyncHandler(async (req, res) => {
         throw new CustomError('type or category missing', 404);
     }
 
-    if(type !== expenseTypes.expense || type !== expenseTypes.income){
-         throw new CustomError('Invalid value for type', 400);
-    }
-
     const categoryObj = await expenseCategoriesModel.create({
-        image_url,
+        // image_url, 
         type,
         category
     });
@@ -273,6 +339,8 @@ exports.AddCategory = asyncHandler(async (req, res) => {
 
 /*
 @EditCategory
+
+@method - PUT
 
 @routes
 local - http://localhost:4000/api/v1/expenses/categories/edit
@@ -291,10 +359,6 @@ exports.EditCategory = asyncHandler(async (req, res) => {
         throw new CustomError('One of the fields missing', 404);
     }
 
-    if(type !== expenseTypes.expense || type !== expenseTypes.income){
-        throw new CustomError('Invalid Value for type', 400);
-    }
-
     const categoryObj = await expenseCategoriesModel.findByIdAndUpdate(objectId, {
         type,
         category
@@ -309,6 +373,8 @@ exports.EditCategory = asyncHandler(async (req, res) => {
 
 /*
 @DeleteCategory
+
+@method - DELETE
 
 @routes
 local - http://localhost:4000/api/v1/expenses/categories/delete

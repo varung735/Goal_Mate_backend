@@ -10,11 +10,13 @@ const {
     GetIncomeCategories, 
     AddCategory,
     EditCategory,
-    DeleteCategory} = require('../controllers/expense.controller');
+    DeleteCategory,
+    GetDistinctDates} = require('../controllers/expense.controller');
 const isLoggedIn = require('../middlewares/auth.middleware');
 
 const expenseRouter = express.Router();
 
+expenseRouter.get('/get/dates', isLoggedIn, GetDistinctDates);
 expenseRouter.get('/current', isLoggedIn, CurrentExpense);
 expenseRouter.get('/monthly', isLoggedIn, MonthlyExpense);
 expenseRouter.get('/yearly', isLoggedIn, YearlyExpense);

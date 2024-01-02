@@ -1,4 +1,5 @@
 const userModel = require('../schemas/user.schema');
+const folderSchema = require('../schemas/folder.schema');
 const asyncHandler = require('../utils/asyncHandler');
 const CustomError = require('../utils/customError');
 const cookieOptions = require('../utils/cookieOptions');
@@ -34,6 +35,11 @@ exports.UserSignUp = asyncHandler(async (req, res) => {
         name: name,
         email: email,
         password: password
+    });
+
+    const folder = await folderSchema.create({
+        userId: user._id,
+        folder_name: 'Main'
     });
 
     const token = await user.generateJwtToken();

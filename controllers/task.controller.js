@@ -3,6 +3,35 @@ const asyncHandler = require('../utils/asyncHandler');
 const CustomError = require('../utils/customError');
 
 /*
+@GetDistinctDates
+
+@method - GET
+
+@routes
+local - http://localhost:4000/api/v1/tasks/group/get/dates
+prod - https://goalmate.render.app/api/v1/tasks/group/get/dates
+
+**description - This function will get all the distinct dates for a user
+
+@parameter - userId
+
+@returns - date array
+*/
+exports.GetDistinctDates = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+
+    const dates = await taskModel.distinct('date', {
+        userId: userId
+    });
+
+    res.status(200).json({
+        success: true,
+        message: 'Got Dates Successfully',
+        dates
+    });
+})
+
+/*
 @GetCurrentTaskGroups
 
 @method - GET
@@ -95,11 +124,11 @@ returns - updated task group
 exports.EditTaskGroup = asyncHandler(async (req, res) => {
     const { taskGroupId, group_name, date } = req.body;
 
-    if(!id || !group_name || !date){
+    if(!taskGroupId || !group_name){
         throw new CustomError('One of the fields missing', 404);
     }
 
-    const taskGroup = await taskModel.findOne({ _id: taskGroupId });
+    const taskGroup = await taskModel.findById(taskGroupId);
 
     if(taskGroup === null){
         throw new CustomError('Task Group not found', 404);
@@ -139,7 +168,7 @@ exports.DeleteTaskGroup = asyncHandler(async (req, res) => {
         throw new CustomError('Object id is missing', 404);
     }
 
-    const taskGroup = await taskModel.findOne({ _id: taskGroupId });
+    const taskGroup = await taskModel.findById(taskGroupId);
 
     if(taskGroup === null){
         throw new CustomError('Task Group not found', 404);

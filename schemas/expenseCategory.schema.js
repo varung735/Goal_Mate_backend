@@ -5,7 +5,8 @@ const expenseCategoriesSchema = new mongoose.Schema(
     {
         imageUrl: {
             type: String,
-            required: [true, 'Image Url is required']
+            required: [true, 'Image Url is required'],
+            default: 'https://res.cloudinary.com/dr61rg1rq/image/upload/v1702903903/GoalMate/Assets/icons/yrfg0yexfyxpq0iw4ibj.svg'
         },
         type: {
             type: String,
