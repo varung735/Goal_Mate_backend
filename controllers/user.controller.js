@@ -242,8 +242,7 @@ exports.SendEmailVerificationToken = asyncHandler(async (req, res) => {
     
     await user.save({ validateBeforeSave: false });
 
-    const verificationUrl = `${req.protocol}://${req.get("host")}/api/v1/users/email/verify?token=${token}`;
-    const text = `Click in this url to verify your email\n${verificationUrl}\nenter this OTP: ${otp} to complete verification`;
+    const text = `enter this OTP: ${otp} to complete verification`;
 
     try {
         await mailHelper({
@@ -254,7 +253,8 @@ exports.SendEmailVerificationToken = asyncHandler(async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: `Mail sent at ${email} for verification`
+            message: `Mail sent at ${email} for verification`,
+            token
         });
     } catch (error) {
         user.emailVerificationToken = undefined;
